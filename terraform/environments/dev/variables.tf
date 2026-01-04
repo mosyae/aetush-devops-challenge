@@ -42,3 +42,8 @@ variable "capacity_type" {
   type        = string
   description = "Capacity type: ON_DEMAND or SPOT"
 }
+
+variable "kubernetes_version" {
+  type        = string
+  description = "Kubernetes version for EKS cluster"
+}

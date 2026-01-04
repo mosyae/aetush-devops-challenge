@@ -51,10 +51,16 @@ variable "capacity_type" {
   default     = "ON_DEMAND"
 }
 
+variable "kubernetes_version" {
+  type        = string
+  description = "Kubernetes version for EKS cluster"
+  default     = "1.31"
+}
+
 # EKS Cluster
 resource "aws_eks_cluster" "main" {
   name    = var.cluster_name
-  version = "1.30"
+  version = var.kubernetes_version
 
   role_arn = aws_iam_role.cluster.arn
 
