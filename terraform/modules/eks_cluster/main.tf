@@ -45,6 +45,12 @@ variable "max_size" {
   type = number
 }
 
+variable "capacity_type" {
+  type        = string
+  description = "Capacity type: ON_DEMAND or SPOT (cheaper for dev)"
+  default     = "ON_DEMAND"
+}
+
 # EKS Cluster
 resource "aws_eks_cluster" "main" {
   name    = var.cluster_name
@@ -73,7 +79,7 @@ resource "aws_eks_node_group" "main" {
   }
 
   instance_types = [var.node_instance_type]
-  capacity_type  = "ON_DEMAND"
+  capacity_type  = var.capacity_type
 
   depends_on = [
     aws_iam_role_policy_attachment.nodes_basic,

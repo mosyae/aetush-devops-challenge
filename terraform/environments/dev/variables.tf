@@ -37,3 +37,8 @@ variable "max_size" {
   type        = number
   description = "Maximum number of worker nodes"
 }
+
+variable "capacity_type" {
+  type        = string
+  description = "Capacity type: ON_DEMAND or SPOT"
+}
