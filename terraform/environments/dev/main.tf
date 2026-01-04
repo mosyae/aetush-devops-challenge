@@ -6,6 +6,14 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.0"
+    }
   }
 }
 
@@ -27,3 +35,5 @@ module "eks_cluster" {
   capacity_type       = var.capacity_type
   kubernetes_version  = var.kubernetes_version
 }
+
+

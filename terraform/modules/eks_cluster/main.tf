@@ -119,15 +119,12 @@ output "configure_kubectl" {
   value = "aws eks update-kubeconfig --region ${var.aws_region} --name ${aws_eks_cluster.main.name}"
 }
 
-output "oidc_provider_arn" {
-  value = aws_iam_openid_connect_provider.main.arn
-}
-
-# Helm and Kubernetes providers configuration
+# Get EKS auth token for Helm provider
 data "aws_eks_cluster_auth" "main" {
   name = aws_eks_cluster.main.name
 }
 
+# Configure Helm provider to manage releases in this cluster
 provider "helm" {
   kubernetes {
     host                   = aws_eks_cluster.main.endpoint
@@ -136,19 +133,16 @@ provider "helm" {
   }
 }
 
-provider "kubernetes" {
-  host                   = aws_eks_cluster.main.endpoint
-  cluster_ca_certificate = base64decode(aws_eks_cluster.main.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.main.token
-}
-
 # Install AWS Load Balancer Controller
 resource "helm_release" "aws_load_balancer_controller" {
   name       = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
   namespace  = "kube-system"
-  version    = "1.7.0"
+  version    = "1.17.0"
+  
+  timeout = 600
+  wait    = true
 
   set {
     name  = "clusterName"
@@ -161,17 +155,21 @@ resource "helm_release" "aws_load_balancer_controller" {
   }
 
   set {
-    name  = "serviceAccount.name"
-    value = "aws-load-balancer-controller"
-  }
-
-  set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = aws_iam_role.lb_controller.arn
   }
 
-  depends_on = [
-    aws_eks_node_group.main,
-    aws_iam_role_policy_attachment.lb_controller
-  ]
+  depends_on = [aws_eks_node_group.main]
+}
+
+output "oidc_provider_arn" {
+  value = aws_iam_openid_connect_provider.main.arn
+}
+
+output "lb_controller_role_arn" {
+  value = aws_iam_role.lb_controller.arn
+}
+
+output "cluster_certificate_authority_data" {
+  value = aws_eks_cluster.main.certificate_authority[0].data
 }
