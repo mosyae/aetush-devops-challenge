@@ -84,6 +84,12 @@ def action():
         logger.exception("Failed to execute action")
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
+@app.route('/simulate-error', methods=['POST'])
+def simulate_error():
+    """Endpoint that always returns 500 for testing"""
+    logger.error("Simulated 500 error triggered by user")
+    return jsonify({'status': 'error', 'message': 'Simulated Internal Server Error'}), 500
+
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 3000))
     app.run(host='0.0.0.0', port=port, debug=False)
