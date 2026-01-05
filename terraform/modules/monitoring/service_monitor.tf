@@ -1,0 +1,30 @@
+resource "kubernetes_manifest" "sre_portal_servicemonitor" {
+  manifest = {
+    apiVersion = "monitoring.coreos.com/v1"
+    kind       = "ServiceMonitor"
+    metadata = {
+      name      = "sre-portal"
+      namespace = "monitoring"
+      labels = {
+        release = "kube-prometheus-stack"
+      }
+    }
+    spec = {
+      selector = {
+        matchLabels = {
+          "app.kubernetes.io/name" = "sre-portal"
+        }
+      }
+      namespaceSelector = {
+        matchNames = ["default"]
+      }
+      endpoints = [
+        {
+          port     = "http"
+          path     = "/metrics"
+          interval = "15s"
+        }
+      ]
+    }
+  }
+}
