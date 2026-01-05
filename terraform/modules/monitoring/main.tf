@@ -15,6 +15,23 @@ resource "helm_release" "kube_prometheus_stack" {
     name  = "grafana.service.type"
     value = "ClusterIP"
   }
+
+  values = [
+    yamlencode({
+      grafana = {
+        additionalDataSources = [
+          {
+            name      = "Loki"
+            type      = "loki"
+            uid       = "loki"
+            url       = "http://loki-stack:3100"
+            access    = "proxy"
+            isDefault = false
+          }
+        ]
+      }
+    })
+  ]
 }
 
 resource "helm_release" "loki_stack" {

@@ -246,7 +246,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{container=\"sre-portal\"}",
+          "expr": "{job=\"default/sre-portal\"}",
           "queryType": "range",
           "refId": "A"
         }
