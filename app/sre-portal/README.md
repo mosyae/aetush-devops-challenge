@@ -1,18 +1,34 @@
 # SRE Portal Application
 
-A Python Flask web application demonstrating DevOps/SRE best practices with Kubernetes deployment.
+A Python Flask web application demonstrating DevOps/SRE best practices, including built-in instrumentation for metrics, logs, and chaos testing.
 
-## Features
+## 🚀 Features
 
-- 🌐 Professional web dashboard with Tailwind CSS
-- 📊 Real-time pod information and system uptime
-- ✅ Health and readiness endpoints for Kubernetes probes
-- 📈 Prometheus metrics endpoint
-- 🐳 Multi-stage Docker build for optimized images
-- 🔒 Non-root container user for security
-- ♻️ Auto-refreshing dashboard
+- **Web Dashboard**: Real-time pod info and system uptime (Tailwind CSS).
+- **Observability**:
+  - **Metrics**: Exposes `/metrics` for Prometheus scraping.
+  - **Logs**: Structured JSON logging for easy parsing by Loki/Promtail.
+- **Chaos Testing**: Simulates errors to test alerting pipelines.
+- **Kubernetes Ready**: Health/Readiness probes and graceful shutdown.
+- **Security**: Runs as non-root user.
 
-## Local Development
+## 🛠️ Instrumentation Details
+
+### Metrics (`/metrics`)
+Uses `prometheus-flask-exporter` to expose:
+- `flask_http_request_duration_seconds`: Latency distribution.
+- `flask_http_request_total`: Total request count by status/method.
+- `flask_http_request_exceptions_total`: Exception counts.
+
+### Logging
+Configured to output logs to `stdout` (standard output), which are collected by Promtail and sent to Loki.
+
+### Chaos Endpoint (`/action`)
+A special endpoint to simulate application failures for testing alerts.
+- **Behavior**: 20% chance of returning HTTP 500 (Internal Server Error).
+- **Usage**: Click the "Action" button on the dashboard multiple times to generate error spikes.
+
+## 🏃 Local Development
 
 ### Prerequisites
 - Python 3.12+
@@ -20,18 +36,16 @@ A Python Flask web application demonstrating DevOps/SRE best practices with Kube
 
 ### Run locally
 ```bash
-cd app
+cd app/sre-portal
 pip install -r requirements.txt
 python app.py
 ```
-
 Visit http://localhost:3000
 
-## Docker Build & Run
+## 🐳 Docker Build & Run
 
 ### Build image
 ```bash
-cd app
 docker build -t sre-portal:latest .
 ```
 
@@ -40,36 +54,11 @@ docker build -t sre-portal:latest .
 docker run -p 3000:3000 sre-portal:latest
 ```
 
-## Push to ECR
+## ☸️ Kubernetes Deployment
 
-```bash
-# Login to ECR
-aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 745865830379.dkr.ecr.eu-central-1.amazonaws.com
+Deployed via Helm. See `k8s/sre-portal/README.md` for details.
 
-# Tag image
-docker tag sre-portal:latest 745865830379.dkr.ecr.eu-central-1.amazonaws.com/aetush-dev-cluster-ecr:latest
-
-# Push to ECR
-docker push 745865830379.dkr.ecr.eu-central-1.amazonaws.com/aetush-dev-cluster-ecr:latest
-```
-
-## Deploy to Kubernetes
-
-### Using Helm
-```bash
-# Dev environment
-helm install sre-portal ./k8s/sre-portal -f ./k8s/sre-portal/values-dev.yaml
-
-# Production environment
-helm install sre-portal ./k8s/sre-portal
-```
-
-### Upgrade deployment
-```bash
-helm upgrade sre-portal ./k8s/sre-portal -f ./k8s/sre-portal/values-dev.yaml
-```
-
-## API Endpoints
+## 🔌 API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -77,26 +66,15 @@ helm upgrade sre-portal ./k8s/sre-portal -f ./k8s/sre-portal/values-dev.yaml
 | `/api/info` | GET | Pod and system information (JSON) |
 | `/health` | GET | Liveness probe endpoint |
 | `/readiness` | GET | Readiness probe endpoint |
-| `/action` | POST | Test action endpoint |
+| `/action` | POST | **Chaos Endpoint**: Simulates 500 errors (20% probability) |
 | `/metrics` | GET | Prometheus metrics |
 
-## Environment Variables
+## ⚙️ Environment Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `3000` | Application port |
 | `HOSTNAME` | (auto) | Pod name in Kubernetes |
-
-## CI/CD Integration
-
-The application is designed for automated CI/CD with GitHub Actions:
-
-1. **Build**: Multi-stage Dockerfile creates optimized image
-2. **Push**: Image pushed to ECR with version tags
-3. **Deploy**: Helm chart updates Kubernetes deployment
-4. **Verify**: Health checks ensure successful deployment
-
-See `.github/workflows/` for pipeline configuration.
 
 ## Security Features
 

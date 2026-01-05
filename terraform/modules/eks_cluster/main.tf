@@ -100,10 +100,16 @@ resource "aws_eks_node_group" "main" {
   instance_types = [var.node_instance_type]
   capacity_type  = var.capacity_type
 
+  tags = {
+    "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+    "k8s.io/cluster-autoscaler/enabled"             = "true"
+  }
+
   depends_on = [
     aws_iam_role_policy_attachment.nodes_basic,
     aws_iam_role_policy_attachment.nodes_cni,
-    aws_iam_role_policy_attachment.nodes_registry
+    aws_iam_role_policy_attachment.nodes_registry,
+    aws_eks_addon.ebs_csi_driver
   ]
 }
 
