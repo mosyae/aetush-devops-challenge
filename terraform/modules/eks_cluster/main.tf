@@ -77,6 +77,11 @@ resource "aws_eks_cluster" "main" {
     security_group_ids = [aws_security_group.main.id]
   }
 
+  access_config {
+    authentication_mode                         = "API_AND_CONFIG_MAP"
+    bootstrap_cluster_creator_admin_permissions = true
+  }
+
   depends_on = [aws_iam_role_policy_attachment.cluster]
 }
 
@@ -129,7 +134,11 @@ provider "helm" {
   kubernetes {
     host                   = aws_eks_cluster.main.endpoint
     cluster_ca_certificate = base64decode(aws_eks_cluster.main.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.main.token
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      args        = ["eks", "get-token", "--cluster-name", aws_eks_cluster.main.name, "--region", var.aws_region]
+      command     = "aws"
+    }
   }
 }
 
