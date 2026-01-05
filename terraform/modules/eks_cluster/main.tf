@@ -141,7 +141,7 @@ resource "helm_release" "aws_load_balancer_controller" {
   namespace  = "kube-system"
   version    = "1.17.0"
   
-  timeout = 600
+  timeout = 1200
   wait    = true
 
   set {
@@ -157,6 +157,16 @@ resource "helm_release" "aws_load_balancer_controller" {
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = aws_iam_role.lb_controller.arn
+  }
+
+  set {
+    name  = "region"
+    value = var.aws_region
+  }
+
+  set {
+    name  = "vpcId"
+    value = aws_vpc.main.id
   }
 
   depends_on = [aws_eks_node_group.main]
