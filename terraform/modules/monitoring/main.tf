@@ -40,3 +40,19 @@ resource "helm_release" "loki_stack" {
     value = "10Gi"
   }
 }
+
+resource "kubernetes_config_map" "grafana_dashboards" {
+  metadata {
+    name      = "sre-portal-dashboard"
+    namespace = "monitoring"
+    labels = {
+      grafana_dashboard = "1"
+    }
+  }
+
+  data = {
+    "sre-portal.json" = file("${path.module}/dashboards/sre-portal.json")
+  }
+
+  depends_on = [helm_release.kube_prometheus_stack]
+}
