@@ -113,6 +113,40 @@ resource "aws_eks_node_group" "main" {
   ]
 }
 
+# A small, stable node group pinned to a single AZ/subnet.
+# This helps stateful workloads backed by EBS (single-AZ) avoid scheduling failures
+# when Spot capacity lands only in a different AZ.
+resource "aws_eks_node_group" "stateful" {
+  cluster_name  = aws_eks_cluster.main.name
+  node_role_arn = aws_iam_role.nodes.arn
+  subnet_ids    = [aws_subnet.public[0].id]
+
+  scaling_config {
+    desired_size = 1
+    min_size     = 1
+    max_size     = 1
+  }
+
+  instance_types = [var.node_instance_type]
+  capacity_type  = "ON_DEMAND"
+
+  labels = {
+    workload = "stateful"
+  }
+
+  tags = {
+    "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+    "k8s.io/cluster-autoscaler/enabled"             = "true"
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.nodes_basic,
+    aws_iam_role_policy_attachment.nodes_cni,
+    aws_iam_role_policy_attachment.nodes_registry,
+    aws_eks_addon.ebs_csi_driver
+  ]
+}
+
 # Outputs
 output "cluster_id" {
   value = aws_eks_cluster.main.id
