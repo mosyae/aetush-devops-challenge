@@ -17,7 +17,9 @@ kubectl apply -f storage-class.yaml
 
 ### 2. Deploy Application (via Helm)
 ```bash
-helm install sre-portal ./sre-portal -f ./sre-portal/values-dev.yaml
+helm install sre-portal ./sre-portal \
+	-f ./sre-portal/values-dev.yaml \
+	--set image.repository=123456789012.dkr.ecr.eu-central-1.amazonaws.com/aetush-dev-cluster-ecr
 ```
 
 ## ☸️ Helm Chart Details (`sre-portal`)
