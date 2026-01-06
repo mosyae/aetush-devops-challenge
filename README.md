@@ -77,6 +77,40 @@ The application includes a "Chaos" feature to demonstrate monitoring:
 3. It has a **20% chance** of returning a `500 Error`.
 4. Check **Grafana** to see the error spike and **Loki** for the stack trace.
 
+## 🧹 Cleanup / Destroy (Cost Savings)
+
+If you’re done with the demo, tear down resources to avoid ongoing AWS charges (EKS control plane, EC2 nodes, Load Balancers, and EBS volumes).
+
+### Option A: Remove workloads only (keep the cluster)
+
+This is useful if you want to stop most runtime costs while keeping the cluster for later.
+
+```bash
+# App (installed by CI via Helm)
+helm uninstall sre-portal -n default
+
+# Monitoring stack (if installed manually via Helm)
+helm uninstall kube-prometheus-stack -n monitoring
+helm uninstall loki-stack -n monitoring
+```
+
+### Option B: Destroy everything (recommended)
+
+This removes the entire dev environment created by Terraform.
+
+```bash
+cd terraform/environments/dev
+terraform destroy
+```
+
+### Verify nothing is left behind
+
+In AWS Console (or via CLI), double-check these are gone to fully stop charges:
+- ALB + target groups (created by Ingress)
+- EBS volumes (e.g., Loki PVC)
+- EC2 instances / node groups
+- EKS cluster
+
 ## 📄 License
 
 MIT License
