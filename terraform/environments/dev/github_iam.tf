@@ -72,9 +72,9 @@ resource "aws_iam_role_policy" "github_actions" {
 # Grant the GitHub Actions role admin access to the cluster
 # This requires the EKS cluster to be in API authentication mode (default for new clusters)
 resource "aws_eks_access_entry" "github_actions" {
-  cluster_name      = module.eks_cluster.cluster_name
-  principal_arn     = aws_iam_role.github_actions.arn
-  type              = "STANDARD"
+  cluster_name  = module.eks_cluster.cluster_name
+  principal_arn = aws_iam_role.github_actions.arn
+  type          = "STANDARD"
 }
 
 resource "aws_eks_access_policy_association" "github_actions" {
