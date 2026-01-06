@@ -12,7 +12,8 @@ This document outlines potential enhancements for the SRE Portal project, focusi
 ### Application Security
 - **Authentication/Authorization**: Add a login layer (e.g., OIDC with GitHub/Google or Keycloak) to the SRE Portal. Currently, the "Chaos" buttons are public.
 - **Container Scanning**: Integrate Trivy or Clair in the CI/CD pipeline to scan Docker images for vulnerabilities before deployment.
-- **Secrets Management**: Replace environment variable secrets with External Secrets Operator (fetching from AWS Secrets Manager or HashiCorp Vault).
+- **Secrets Management**: Replace environment variable secrets with External Secrets Operator (fetching from AWS Secrets Manager / SSM Parameter Store or HashiCorp Vault).
+- **Grafana Credentials (Option B)**: Stop generating/storing the Grafana admin password via Terraform state; instead sync it from a cloud vault into a Kubernetes Secret and configure Grafana to use `existingSecret`.
 
 ### Role-Based Access Control (RBAC)
 - **Granular IAM Roles**: Further restrict IRSA (IAM Roles for Service Accounts) policies to least privilege.

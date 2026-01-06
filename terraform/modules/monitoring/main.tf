@@ -1,3 +1,8 @@
+resource "random_password" "grafana_admin" {
+  length  = 24
+  special = true
+}
+
 resource "helm_release" "kube_prometheus_stack" {
   name       = "kube-prometheus-stack"
   repository = "https://prometheus-community.github.io/helm-charts"
@@ -6,9 +11,9 @@ resource "helm_release" "kube_prometheus_stack" {
   create_namespace = true
   version    = "68.1.0"
 
-  set {
+  set_sensitive {
     name  = "grafana.adminPassword"
-    value = "admin123" # Change this in production!
+    value = random_password.grafana_admin.result
   }
 
   set {
@@ -72,4 +77,10 @@ resource "kubernetes_config_map" "grafana_dashboards" {
   }
 
   depends_on = [helm_release.kube_prometheus_stack]
+}
+
+output "grafana_admin_password" {
+  description = "Grafana admin password (generated for demo purposes; stored in Terraform state)."
+  value       = random_password.grafana_admin.result
+  sensitive   = true
 }

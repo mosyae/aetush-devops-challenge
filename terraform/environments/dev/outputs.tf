@@ -17,3 +17,9 @@ output "configure_kubectl" {
 output "oidc_provider_arn" {
   value = module.eks_cluster.oidc_provider_arn
 }
+
+output "grafana_admin_password" {
+  description = "Grafana admin password (generated for demo purposes; stored in Terraform state)."
+  value       = module.monitoring.grafana_admin_password
+  sensitive   = true
+}
