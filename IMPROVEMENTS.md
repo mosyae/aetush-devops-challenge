@@ -40,9 +40,17 @@ This document outlines potential enhancements for the SRE Portal project, focusi
 - **Feature Flags**: Toggle features on/off dynamically without redeploying.
 - **Database Connectivity**: Connect to a stateful backend (Postgres/Redis) to demonstrate monitoring of database connections and query performance.
 
+## 🧪 Quality Assurance & Testing
+
+### Code Quality & Testing
+- **Unit Tests**: Implement `pytest` for the Flask application to verify endpoints (especially the Chaos logic) before building images.
+- **Integration Tests**: Verify the application works correctly with Prometheus code instrumentation.
+- **Infrastructure Tests**: Use `terratest` or `checkov` to validate infrastructure code compliance and security.
+
 ## 🏗️ Infrastructure & DevOps
 
 ### CI/CD Improvements
+- **Test Stage**: Add a dedicated pipeline stage to run unit and integration tests; fail the build if tests pass but coverage is low.
 - **GitOps (ArgoCD/Flux)**: Move from reducing "Terraform apply" to a GitOps model for Kubernetes manifests, ensuring synchronization between Git and the Cluster.
 - **Pre-commit Hooks**: Enforce linting (tfsec, pylint) and formatting before code is committed.
 - **Canary Deployments**: Use Flagger or Argo Rollouts to implement progressive delivery.
