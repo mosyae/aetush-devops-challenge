@@ -47,6 +47,12 @@ jobs:
     - name: Update kubeconfig
       run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
+    - name: Verify cluster access
+      run: |
+        kubectl cluster-info
+        kubectl get nodes -o wide
+        kubectl get ns
+
     - name: Deploy to EKS
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
