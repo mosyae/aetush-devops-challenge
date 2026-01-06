@@ -16,7 +16,7 @@ autoscaling:
   enabled: false
 
 env:
-  - name: NODE_ENV
+  - name: APP_ENV
     value: "development"
   - name: PORT
     value: "3000"

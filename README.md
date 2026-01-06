@@ -84,6 +84,8 @@ If you’re done with the demo, tear down resources to avoid ongoing AWS charges
 ### Option A: Remove workloads only (keep the cluster)
 
 This is useful if you want to stop most runtime costs while keeping the cluster for later.
+- ALB and EBS volumes are the main recurring costs
+- Destroy section removes ALB + EKS + volumes
 
 ```bash
 # App (installed by CI via Helm)
