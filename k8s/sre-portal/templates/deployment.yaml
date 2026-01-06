@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ required \"values.image.repository must be set (e.g. 123456789012.dkr.ecr.eu-central-1.amazonaws.com/your-repo)\" .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        image: {{ printf "%s:%s" (required "values.image.repository must be set (e.g. 123456789012.dkr.ecr.eu-central-1.amazonaws.com/your-repo)" .Values.image.repository) (default .Chart.AppVersion .Values.image.tag) | quote }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - name: http
