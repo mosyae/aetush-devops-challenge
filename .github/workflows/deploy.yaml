@@ -19,6 +19,7 @@ permissions:
 jobs:
   deploy:
     name: Deploy
+    if: ${{ vars.DEPLOY_ENABLE == 'true' }}
     runs-on: ubuntu-latest
 
     steps:

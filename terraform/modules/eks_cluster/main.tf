@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 1.0"
-  
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -53,6 +53,24 @@ variable "max_size" {
   type = number
 }
 
+variable "stateful_desired_size" {
+  type        = number
+  description = "Desired number of nodes in the stateful node group"
+  default     = 1
+}
+
+variable "stateful_min_size" {
+  type        = number
+  description = "Minimum number of nodes in the stateful node group"
+  default     = 1
+}
+
+variable "stateful_max_size" {
+  type        = number
+  description = "Maximum number of nodes in the stateful node group"
+  default     = 1
+}
+
 variable "capacity_type" {
   type        = string
   description = "Capacity type: ON_DEMAND or SPOT (cheaper for dev)"
@@ -87,9 +105,9 @@ resource "aws_eks_cluster" "main" {
 
 # EKS Node Group
 resource "aws_eks_node_group" "main" {
-  cluster_name    = aws_eks_cluster.main.name
-  node_role_arn   = aws_iam_role.nodes.arn
-  subnet_ids      = aws_subnet.public[*].id
+  cluster_name  = aws_eks_cluster.main.name
+  node_role_arn = aws_iam_role.nodes.arn
+  subnet_ids    = aws_subnet.public[*].id
 
   scaling_config {
     desired_size = var.desired_size
@@ -122,9 +140,9 @@ resource "aws_eks_node_group" "stateful" {
   subnet_ids    = [aws_subnet.public[0].id]
 
   scaling_config {
-    desired_size = 1
-    min_size     = 1
-    max_size     = 1
+    desired_size = var.stateful_desired_size
+    min_size     = var.stateful_min_size
+    max_size     = var.stateful_max_size
   }
 
   instance_types = [var.node_instance_type]
@@ -189,7 +207,7 @@ resource "helm_release" "aws_load_balancer_controller" {
   chart      = "aws-load-balancer-controller"
   namespace  = "kube-system"
   version    = "1.17.0"
-  
+
   timeout = 1200
   wait    = true
 

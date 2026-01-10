@@ -91,7 +91,7 @@ This is useful if you want to stop most runtime costs while keeping the cluster 
 # App (installed by CI via Helm)
 helm uninstall sre-portal -n default
 
-# Monitoring stack (if installed manually via Helm)
+# Monitoring stack (installed by Terraform via Helm)
 helm uninstall kube-prometheus-stack -n monitoring
 helm uninstall loki-stack -n monitoring
 ```

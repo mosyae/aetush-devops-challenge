@@ -38,6 +38,21 @@ variable "max_size" {
   description = "Maximum number of worker nodes"
 }
 
+variable "stateful_desired_size" {
+  type        = number
+  description = "Desired number of nodes in the stateful node group"
+}
+
+variable "stateful_min_size" {
+  type        = number
+  description = "Minimum number of nodes in the stateful node group"
+}
+
+variable "stateful_max_size" {
+  type        = number
+  description = "Maximum number of nodes in the stateful node group"
+}
+
 variable "capacity_type" {
   type        = string
   description = "Capacity type: ON_DEMAND or SPOT"
